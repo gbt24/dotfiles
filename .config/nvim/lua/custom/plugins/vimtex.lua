@@ -1,4 +1,4 @@
-local custom_utils = require('custom.utils')
+local custom_utils = require 'custom.utils'
 
 return {
   'lervag/vimtex',

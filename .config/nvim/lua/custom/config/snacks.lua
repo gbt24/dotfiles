@@ -107,7 +107,7 @@ require('snacks').setup {
       max_height = 30,
     },
     resolve = function(_, src)
-      local vault_path = vim.fn.expand '~' .. '/Library/Mobile Documents/iCloud~md~obsidian/Documents/Obsidian Vault'
+      local vault_path = vim.fn.expand '~' .. '/Users/gbt24/Documents/Obsidian Vault'
 
       -- when the file path is *attachments/*
       local att_path = src:match '(attachments/.*)'

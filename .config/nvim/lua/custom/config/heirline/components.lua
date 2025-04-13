@@ -405,7 +405,7 @@ M.FileFlags = {
     condition = function(self)
       return vim.fn.fnamemodify(self.filename, ':.') ~= '' and vim.api.nvim_get_option_value('modified', { buf = self.bufnr })
     end,
-    provider = ' 􀴥 ',
+    provider = ' [M] ',
     hl = function(self)
       return { fg = palette.text, bold = self.is_active }
     end,

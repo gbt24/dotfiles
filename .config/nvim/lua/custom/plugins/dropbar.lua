@@ -7,7 +7,7 @@ return {
       path = {
         modified = function(sym)
           return sym:merge {
-            name = sym.name .. ' 􀴥 ',
+            name = sym.name .. ' [M] ',
             -- icon = ' ',
             -- name_hl = 'DiffAdded',
             -- icon_hl = 'DiffAdded',
