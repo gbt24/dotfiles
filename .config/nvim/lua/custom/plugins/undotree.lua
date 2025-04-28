@@ -3,8 +3,8 @@
 return {
   'mbbill/undotree',
   config = function()
-    local custom = require 'custom.utils'
-    local width = custom.width()
+    -- local custom = require 'custom.utils'
+    local width = 30
 
     vim.g.undotree_SplitWidth = width
     vim.g.undotree_WindowLayout = 2

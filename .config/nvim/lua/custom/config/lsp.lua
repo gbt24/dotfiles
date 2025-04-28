@@ -78,10 +78,6 @@ local servers = {
 }
 
 -- Set up all server
-local custom_handlers = {
-  ['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = 'single' }),
-  ['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = 'single' }),
-}
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = vim.tbl_deep_extend('force', capabilities, require('blink.cmp').get_lsp_capabilities())
 capabilities.textDocument.foldingRange = {
@@ -90,7 +86,6 @@ capabilities.textDocument.foldingRange = {
 }
 local function setup_server(server_name, config)
   config.capabilities = vim.tbl_deep_extend('force', {}, capabilities, config.capabilities or {})
-  config.handlers = vim.tbl_deep_extend('force', {}, custom_handlers, config.handlers or {})
   require('lspconfig')[server_name].setup(config)
 end
 for server_name, server_opt in pairs(servers) do
@@ -109,17 +104,13 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end
 
     map('gd', function()
-      vim.g.simple_indicator_on = true
-      local params = vim.lsp.util.make_position_params()
-      vim.lsp.buf_request(params.bufnr, 'textDocument/definition', params, function(_, result, _, _)
+      local params = vim.lsp.util.make_position_params(0, 'utf-8')
+      vim.lsp.buf_request(0, 'textDocument/definition', params, function(_, result, _, _)
         if not result or vim.tbl_isempty(result) then
           vim.notify('No definition found', vim.log.levels.INFO)
         else
-          -- vim.lsp.buf.definition()
-          -- require('telescope.builtin').lsp_definitions()
           require('snacks').picker.lsp_definitions()
         end
-        vim.g.simple_indicator_on = false
       end)
     end, 'Goto Definition')
     map('gD', vim.lsp.buf.declaration, 'Goto Declaration')

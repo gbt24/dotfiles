@@ -31,7 +31,7 @@ vim.api.nvim_create_autocmd('FileType', {
 })
 
 vim.api.nvim_create_autocmd('BufRead', {
-  pattern = vim.fn.expand '~' .. '/Library/Mobile Documents/iCloud~md~obsidian/Documents/Obsidian Vault/*.md',
+  pattern = vim.fn.expand '~' .. '/Users/gbt24/Documents/Obsidian Vault/*.md',
   callback = function()
     local function parse_date_line(date_line)
       local home = os.getenv 'HOME'
@@ -40,7 +40,7 @@ vim.api.nvim_create_autocmd('BufRead', {
         print 'No valid date found in the line'
         return nil
       end
-      local note_dir = vim.fn.expand '~' .. '/Library/Mobile Documents/iCloud~md~obsidian/Documents/Obsidian Vault/daily'
+      local note_dir = vim.fn.expand '~' .. '/Users/gbt24/Documents/Obsidian Vault/daily'
       local note_name = string.format('%s-%s-%s-%s.md', year, month, day, weekday)
       return note_dir, note_name
     end
