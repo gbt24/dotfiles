@@ -1,16 +1,19 @@
 -- UI touches
+vim.lsp.enable 'clangd'
+vim.lsp.enable 'lua_ls'
+vim.lsp.enable 'basedpyright'
+vim.lsp.enable 'ruff'
+vim.lsp.enable 'marksman'
+vim.lsp.enable 'tinymist'
+vim.lsp.enable 'texlab'
 local icons = require 'custom.ui.icons'
-local util = require 'lspconfig.util'
 vim.diagnostic.config {
-  virtual_text = {
-    spacing = 4,
-    prefix = '',
-  },
-  float = {
-    severity_sort = true,
-    source = 'if_many',
-    border = 'single',
-  },
+  virtual_lines = { current_line = true },
+  -- virtual_text = {
+  --   spacing = 4,
+  --   prefix = '',
+  -- },
+  float = { severity_sort = true },
   severity_sort = true,
   signs = {
     text = {
@@ -22,78 +25,8 @@ vim.diagnostic.config {
   },
 }
 
--- Main table for all LSP opts
-local servers = {
-  tinymist = {},
-  lua_ls = {
-    settings = {
-      Lua = {
-        completion = {
-          callSnippet = 'Replace',
-        },
-      },
-    },
-  },
-  clangd = { capabilities = { offsetEncoding = 'utf-8' }, cmd = { 'clangd' } },
-  basedpyright = {
-    settings = {
-      basedpyright = {
-        analysis = { typeCheckingMode = 'off' },
-      },
-    },
-    root_dir = function(fname)
-      local dir_name = util.root_pattern(unpack {
-        'pyproject.toml',
-        'setup.py',
-        'setup.cfg',
-        'requirements.txt',
-        'Pipfile',
-        'pyrightconfig.json',
-        '.git',
-      })(fname)
-      if dir_name == nil then
-        return vim.fs.dirname(fname)
-      else
-        return dir_name
-      end
-    end,
-  },
-  ruff = {},
-  marksman = {},
-  texlab = {
-    settings = {
-      texlab = {
-        diagnostics = {
-          ignoredPatterns = {
-            'Overfull',
-            'Underfull',
-            'Package hyperref Warning',
-            'Float too large for page',
-            'contains only floats',
-          },
-        },
-      },
-    },
-  },
-}
-
--- Set up all server
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = vim.tbl_deep_extend('force', capabilities, require('blink.cmp').get_lsp_capabilities())
-capabilities.textDocument.foldingRange = {
-  dynamicRegistration = false,
-  lineFoldingOnly = true,
-}
-local function setup_server(server_name, config)
-  config.capabilities = vim.tbl_deep_extend('force', {}, capabilities, config.capabilities or {})
-  require('lspconfig')[server_name].setup(config)
-end
-for server_name, server_opt in pairs(servers) do
-  setup_server(server_name, server_opt)
-end
-
 -- folding after capabilities is loaded
--- require 'custom.config.folding'
+require 'custom.config.folding'
 
 -- Define LSP-related keymaps
 vim.api.nvim_create_autocmd('LspAttach', {

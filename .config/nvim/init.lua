@@ -16,19 +16,8 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
   { 'tpope/vim-sleuth', event = { 'BufReadPost', 'BufNewFile' } },
-  -- { 'stevearc/aerial.nvim', event = { 'BufReadPost', 'BufNewFile' } },
   { 'fladson/vim-kitty', ft = 'kitty', tag = 'v1.1' },
   { 'folke/todo-comments.nvim', event = { 'BufReadPost', 'BufNewFile' }, dependencies = { 'nvim-lua/plenary.nvim' }, opts = {} },
-  {
-    'christoomey/vim-tmux-navigator',
-    keys = {
-      { '<c-h>', '<cmd><C-U>TmuxNavigateLeft<cr>' },
-      { '<c-j>', '<cmd><C-U>TmuxNavigateDown<cr>' },
-      { '<c-k>', '<cmd><C-U>TmuxNavigateUp<cr>' },
-      { '<c-l>', '<cmd><C-U>TmuxNavigateRight<cr>' },
-      { '<c-\\>', '<cmd><C-U>TmuxNavigatePrevious<cr>' },
-    },
-  },
   { import = 'custom.plugins' },
 }, {
   ui = {

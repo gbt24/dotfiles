@@ -66,15 +66,9 @@ M.RightPadding = function(child, num_space)
   return result
 end
 M.Mode = {
-  -- get vim current mode, this information will be required by the provider
-  -- and the highlight functions, so we compute it only once per component
-  -- evaluation and store it as a component attribute
   init = function(self)
-    self.mode = vim.fn.mode(1) -- :h mode()
+    self.mode = vim.fn.mode(1)
   end,
-  -- Now we define some dictionaries to map the output of mode() to the
-  -- corresponding string and color. We can put these into `static` to compute
-  -- them at initialisation time.
   static = {
     mode_names = { -- change the strings if you like it vvvvverbose!
       n = '',
@@ -129,35 +123,19 @@ M.Mode = {
       t = palette.green,
     },
   },
-  -- We can now access the value of mode() that, by now, would have been
-  -- computed by `init()` and use it to index our strings dictionary.
-  -- note how `static` fields become just regular attributes once the
-  -- component is instantiated.
-  -- To be extra meticulous, we can also add some vim statusline syntax to
-  -- control the padding and make sure our string is always at least 2
-  -- characters long. Plus a nice Icon.
   provider = function(self)
     return '%1(' .. self.mode_names[self.mode] .. '%)'
   end,
-  -- Same goes for the highlight. Now the foreground will change according to the current mode.
   hl = function(self)
     local mode = self.mode:sub(1, 1) -- get only the first mode character
     return { fg = palette.base, bg = self.mode_colors[mode], bold = true }
   end,
-  -- Re-evaluate the component only on ModeChanged event!
-  -- Also allows the statusline to be re-evaluated when entering operator-pending mode
   update = {
     'ModeChanged',
     pattern = '*:*',
     callback = vim.schedule_wrap(function()
-      vim.cmd 'redrawstatus'
+      pcall(vim.cmd, 'redrawstatus')
     end),
-  },
-  on_click = {
-    name = 'heirline_mode',
-    callback = function()
-      vim.notify(vim.fn.mode(), vim.log.levels.INFO)
-    end,
   },
 }
 
@@ -199,12 +177,12 @@ M.LSPActive = {
     return table.concat(names, ',')
   end,
   hl = { fg = palette.surface1, bold = false },
-  on_click = {
-    name = 'heirline_lsp',
-    callback = function()
-      vim.cmd 'LspInfo'
-    end,
-  },
+  -- on_click = {
+  --   name = 'heirline_lsp',
+  --   callback = function()
+  --     vim.cmd 'LspInfo'
+  --   end,
+  -- },
 }
 
 M.FileType = {
@@ -260,33 +238,45 @@ M.Git = {
     hl = { bold = true },
   },
   {
+    condition = function(self)
+      return self.has_changes
+    end,
+    provider = '(',
+  },
+  {
     provider = function(self)
       local count = self.status_dict.added or 0
-      return count > 0 and (' +' .. count)
+      return count > 0 and ('+' .. count)
     end,
     hl = { fg = colors.git_add },
   },
   {
     provider = function(self)
       local count = self.status_dict.removed or 0
-      return count > 0 and (' -' .. count)
+      return count > 0 and ('-' .. count)
     end,
     hl = { fg = colors.git_del },
   },
   {
     provider = function(self)
       local count = self.status_dict.changed or 0
-      return count > 0 and (' ~' .. count)
+      return count > 0 and ('~' .. count)
     end,
     hl = { fg = colors.git_change },
   },
-  on_click = {
-    name = 'heirline_git',
-    callback = function()
-      ---@diagnostic disable-next-line: missing-fields
-      Snacks.lazygit { cwd = Snacks.git.get_root() }
+  {
+    condition = function(self)
+      return self.has_changes
     end,
+    provider = ')',
   },
+  -- on_click = {
+  --   name = 'heirline_git',
+  --   callback = function()
+  --     ---@diagnostic disable-next-line: missing-fields
+  --     Snacks.lazygit { cwd = Snacks.git.get_root() }
+  --   end,
+  -- },
 }
 
 -- Dianostics
@@ -333,12 +323,12 @@ M.Diagnostics = {
     end,
     hl = { fg = colors.diag_hint },
   },
-  on_click = {
-    name = 'heirline_diagnostic',
-    callback = function()
-      Snacks.picker.diagnostics_buffer()
-    end,
-  },
+  -- on_click = {
+  --   name = 'heirline_diagnostic',
+  --   callback = function()
+  --     Snacks.picker.diagnostics_buffer()
+  --   end,
+  -- },
 } -- Diagnostics
 
 M.FileIcon = {
@@ -371,7 +361,11 @@ M.FileName = {
     return filename
   end,
   hl = function(self)
-    return { fg = self.is_active and palette.text or palette.surface2, bold = self.is_active or self.is_visible, italic = self.is_active }
+    return {
+      fg = self.is_active and palette.text or palette.surface2,
+      bold = self.is_active or self.is_visible,
+      italic = self.is_active,
+    }
   end,
 }
 
@@ -393,7 +387,11 @@ M.FilePath = {
     return filename
   end,
   hl = function(self)
-    return { fg = self.is_active and palette.text or palette.subtext0, bold = self.is_active or self.is_visible, italic = self.is_active }
+    return {
+      fg = self.is_active and palette.text or palette.subtext0,
+      bold = self.is_active or self.is_visible,
+      italic = self.is_active,
+    }
   end,
 }
 
@@ -405,7 +403,7 @@ M.FileFlags = {
     condition = function(self)
       return vim.fn.fnamemodify(self.filename, ':.') ~= '' and vim.api.nvim_get_option_value('modified', { buf = self.bufnr })
     end,
-    provider = ' [M] ',
+    provider = ' M ',
     hl = function(self)
       return { fg = palette.text, bold = self.is_active }
     end,
@@ -466,7 +464,7 @@ M.FilePathBlock = {
   end,
   hl = { fg = palette.text },
   M.FileIcon,
-  M.FilePath,
+  M.FileName,
   M.FileFlags,
 }
 
@@ -496,17 +494,17 @@ M.ShowCmd = {
   provider = '%3.5(%S%)',
 }
 
--- M.SearchOccurrence = {
---   condition = function()
---     return vim.v.hlsearch == 1
---   end,
---   hl = { fg = palette.sky },
---   provider = function()
---     local sinfo = vim.fn.searchcount { maxcount = 0 }
---     local search_stat = sinfo.incomplete > 0 and ' [?/?]' or sinfo.total > 0 and (' [%s/%s]'):format(sinfo.current, sinfo.total) or ''
---     return search_stat
---   end,
--- }
+M.SearchOccurrence = {
+  condition = function()
+    return vim.v.hlsearch == 1
+  end,
+  hl = { fg = palette.sky },
+  provider = function()
+    local sinfo = vim.fn.searchcount { maxcount = 0 }
+    local search_stat = sinfo.incomplete > 0 and ' [?/?]' or sinfo.total > 0 and (' [%s/%s]'):format(sinfo.current, sinfo.total) or ''
+    return search_stat
+  end,
+}
 
 M.SimpleIndicator = {
   condition = function()
