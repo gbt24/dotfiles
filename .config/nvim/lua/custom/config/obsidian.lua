@@ -1,4 +1,4 @@
-local vault_path = vim.fn.expand '~' .. '/Users/gbt24/Documents/Obsidian Vault'
+local vault_path = vim.fn.expand '~' .. '/Library/Mobile Documents/iCloud~md~obsidian/Documents/Obsidian Vault'
 ---@diagnostic disable: missing-fields
 require('obsidian').setup {
   workspaces = {
@@ -73,9 +73,7 @@ cmp.register_source('obsidian_new', require('cmp_obsidian_new').new())
 cmp.register_source('obsidian_tags', require('cmp_obsidian_tags').new())
 
 local blink = require 'blink.cmp'
-
 blink.add_filetype_source('markdown', 'obsidian')
-
 blink.add_filetype_source('markdown', 'obsidian_new')
 blink.add_filetype_source('markdown', 'obsidian_tags')
 blink.add_provider('obsidian', { name = 'obsidian', module = 'blink.compat.source' })

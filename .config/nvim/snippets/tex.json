@@ -264,11 +264,7 @@
   },
   "Tabular": {
     "prefix": "tab",
-    "body": [
-      "\\\\begin{${1:t}${1/(t)$|(a)$|(.*)/(?1:abular)(?2:rray)/}}{${2:c}}",
-      "$0${2/((?<=[clr])([ |]*(c|l|r)))|./(?1: & )/g}",
-      "\\\\end{${1:t}${1/(t)$|(a)$|(.*)/(?1:abular)(?2:rray)/}}"
-    ],
+    "body": ["\\begin{tabular}{$1}", "\t$2", "\\end{tabular}"],
     "description": "Tabular"
   },
   "Figure": {
@@ -382,5 +378,27 @@
     "prefix": "frame",
     "body": ["\\begin{frame}{${1:Title}}", "\t$0", "\\end{frame}"],
     "description": "Add a beamer frame"
+  },
+  "corner link": {
+    "prefix": "cornerlink",
+    "body": [
+      "\\begin{tikzpicture}[remember picture, overlay]",
+      "\t\\node[anchor=north east] at ([xshift=0.0cm,yshift=0.0cm]current page.north east)",
+      "{\\href{$1}{\\footnotesize $2}};",
+      "\\end{tikzpicture}"
+    ],
+    "description": "Add a corner link"
+  },
+  "includegraphics": {
+    "prefix": "includegraphics",
+    "body": [
+      "\\includegraphics[width=${1:0.49}\\textwidth]{${2:example-image-a.png}}"
+    ],
+    "description": "Include graphics with half text width"
+  },
+  "link": {
+    "prefix": "link",
+    "body": ["\\href{${1:link}}{${2:text}}"],
+    "description": "Add a link"
   }
 }

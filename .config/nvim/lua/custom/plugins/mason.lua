@@ -21,6 +21,5 @@ return {
         height = 0.7,
       },
     }
-    require 'custom.config.lsp'
   end,
 }

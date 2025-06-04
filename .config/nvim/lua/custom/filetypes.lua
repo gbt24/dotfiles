@@ -30,8 +30,32 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'tex',
+  callback = function()
+    vim.keymap.set('n', '<leader>lb', function()
+      Snacks.picker.grep_buffers {
+        finder = 'grep',
+        format = 'file',
+        prompt = ' ',
+        -- search = '^\\s*- \\[ \\]',
+        search = '\\begin{frame}',
+        regex = false,
+        live = false,
+        args = {},
+        on_show = function()
+          vim.cmd.stopinsert()
+        end,
+        buffers = false,
+        supports_live = false,
+        layout = 'left',
+      }
+    end, { desc = 'Search Beamer Frames' })
+  end,
+})
+
 vim.api.nvim_create_autocmd('BufRead', {
-  pattern = vim.fn.expand '~' .. '/Users/gbt24/Documents/Obsidian Vault/*.md',
+  pattern = vim.fn.expand '~' .. '/Library/Mobile Documents/iCloud~md~obsidian/Documents/Obsidian Vault/*.md',
   callback = function()
     local function parse_date_line(date_line)
       local home = os.getenv 'HOME'
@@ -40,7 +64,7 @@ vim.api.nvim_create_autocmd('BufRead', {
         print 'No valid date found in the line'
         return nil
       end
-      local note_dir = vim.fn.expand '~' .. '/Users/gbt24/Documents/Obsidian Vault/daily'
+      local note_dir = vim.fn.expand '~' .. '/Library/Mobile Documents/iCloud~md~obsidian/Documents/Obsidian Vault/daily'
       local note_name = string.format('%s-%s-%s-%s.md', year, month, day, weekday)
       return note_dir, note_name
     end

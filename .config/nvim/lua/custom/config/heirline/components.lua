@@ -401,7 +401,8 @@ M.FilePath = {
 M.FileFlags = {
   {
     condition = function(self)
-      return vim.fn.fnamemodify(self.filename, ':.') ~= '' and vim.api.nvim_get_option_value('modified', { buf = self.bufnr })
+      return vim.fn.fnamemodify(self.filename, ':.') ~= '' and
+          vim.api.nvim_get_option_value('modified', { buf = self.bufnr })
     end,
     provider = ' M ',
     hl = function(self)
@@ -410,7 +411,8 @@ M.FileFlags = {
   },
   {
     condition = function(self)
-      return not vim.api.nvim_get_option_value('modifiable', { buf = self.bufnr }) or vim.api.nvim_get_option_value('readonly', { buf = self.bufnr })
+      return not vim.api.nvim_get_option_value('modifiable', { buf = self.bufnr }) or
+          vim.api.nvim_get_option_value('readonly', { buf = self.bufnr })
     end,
     provider = function(self)
       if vim.api.nvim_get_option_value('buftype', { buf = self.bufnr }) == 'terminal' then
@@ -501,7 +503,8 @@ M.SearchOccurrence = {
   hl = { fg = palette.sky },
   provider = function()
     local sinfo = vim.fn.searchcount { maxcount = 0 }
-    local search_stat = sinfo.incomplete > 0 and ' [?/?]' or sinfo.total > 0 and (' [%s/%s]'):format(sinfo.current, sinfo.total) or ''
+    local search_stat = sinfo.incomplete > 0 and ' [?/?]' or
+        sinfo.total > 0 and (' [%s/%s]'):format(sinfo.current, sinfo.total) or ''
     return search_stat
   end,
 }

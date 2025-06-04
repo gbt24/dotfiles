@@ -3,24 +3,10 @@ function _G.get_oil_winbar()
   if dir then
     return vim.fn.fnamemodify(dir, ':~')
   else
-    -- If there is no current directory (e.g. over ssh), just show the buffer name
     return vim.api.nvim_buf_get_name(0)
   end
 end
 local detail = false
--- helper function to parse output
-local function parse_output(proc)
-  local result = proc:wait()
-  local ret = {}
-  if result.code == 0 then
-    for line in vim.gsplit(result.stdout, '\n', { plain = true, trimempty = true }) do
-      -- Remove trailing slash
-      line = line:gsub('/$', '')
-      ret[line] = true
-    end
-  end
-  return ret
-end
 
 require('oil').setup {
   default_file_explorer = true,
@@ -54,7 +40,3 @@ require('oil').setup {
     winbar = '%!v:lua.get_oil_winbar()',
   },
 }
-
--- Open parent directory in current window
-vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
-vim.keymap.set('n', '<leader>e', '<CMD>Oil<CR>', { desc = 'Open parent directory' })

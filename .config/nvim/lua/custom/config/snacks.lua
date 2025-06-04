@@ -70,8 +70,9 @@ require('snacks').setup {
           end,
         },
         { icon = ' ', key = 'e', desc = 'New file', action = ':enew' },
+        { icon = ' ', key = 'o', desc = 'Recent files', action = ':lua Snacks.picker.recent()' },
         { icon = '󰒲 ', key = 'L', desc = 'Lazy', action = ':Lazy', enabled = package.loaded.lazy ~= nil },
-        { icon = ' ', key = 'P', desc = 'Lazy Profile', action = ':Lazy profile', enabled = package.loaded.lazy ~= nil },
+        { icon = '󰔛 ', key = 'P', desc = 'Lazy Profile', action = ':Lazy profile', enabled = package.loaded.lazy ~= nil },
         { icon = ' ', key = 'M', desc = 'Mason', action = ':Mason', enabled = package.loaded.lazy ~= nil },
         { icon = ' ', key = 'q', desc = 'Quit', action = ':qa' },
       },
@@ -86,15 +87,17 @@ require('snacks').setup {
     sections = {
       { section = 'header' },
       { icon = ' ', title = 'Keymaps', section = 'keys', indent = 2, padding = 1 },
-      { icon = ' ', title = 'Recent Files', section = 'recent_files', indent = 2, padding = 1 },
-      { icon = ' ', title = 'Projects', section = 'projects', indent = 2, padding = 1 },
+      -- { icon = ' ', title = 'Recent Files', section = 'recent_files', indent = 2, padding = 1 },
+      -- { icon = ' ', title = 'Projects', section = 'projects', indent = 2, padding = 1 },
       -- { section = 'startup' },
     },
   },
   statuscolumn = {
+    left = { 'fold', 'git', 'mark', 'sign' }, -- priority of signs on the left (high to low)
+    right = {}, -- priority of signs on the right (high to low)
     folds = {
       open = true, -- show open fold icons
-      git_hl = true, -- use Git Signs hl for fold icons
+      git_hl = false, -- use Git Signs hl for fold icons
     },
   },
   image = {
@@ -107,7 +110,7 @@ require('snacks').setup {
       max_height = 30,
     },
     resolve = function(_, src)
-      local vault_path = vim.fn.expand '~' .. '/Users/gbt24/Documents/Obsidian Vault'
+      local vault_path = vim.fn.expand '~' .. '/Library/Mobile Documents/iCloud~md~obsidian/Documents/Obsidian Vault'
 
       -- when the file path is *attachments/*
       local att_path = src:match '(attachments/.*)'

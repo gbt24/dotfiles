@@ -136,6 +136,14 @@ return {
       mode = { 'n', 'x' },
     },
     {
+      '<leader>fa',
+      function()
+        Snacks.picker.autocmds()
+      end,
+      desc = 'Find autocmds',
+      mode = { 'n' },
+    },
+    {
       '<leader>ls',
       function()
         local bufnr = vim.api.nvim_get_current_buf()
@@ -218,47 +226,13 @@ return {
       desc = 'Diagnostics',
     },
     {
-      '<leader>f/',
-      function()
-        Snacks.picker.lines()
-      end,
-      desc = 'Buffer Lines',
-    },
-    {
       '<leader>fT',
       function()
+        ---@diagnostic disable-next-line: undefined-field
         Snacks.picker.todo_comments { keywords = { 'TODO', 'FIX', 'FIXME', 'HACK' }, layout = 'select' }
       end,
       desc = 'Todo/Fix/Fixme',
     },
-    -- {
-    --   '<leader>fT',
-    --   function()
-    --     Snacks.picker.grep {
-    --       prompt = ' ',
-    --       -- pass your desired search as a static pattern
-    --       search = '^\\s*- \\[ \\]',
-    --       -- we enable regex so the pattern is interpreted as a regex
-    --       regex = true,
-    --       -- no “live grep” needed here since we have a fixed pattern
-    --       live = false,
-    --       -- restrict search to the current working directory
-    --       dirs = { vim.fn.getcwd() },
-    --       -- include files ignored by .gitignore
-    --       args = { '--no-ignore' },
-    --       -- Start in normal mode
-    --       on_show = function()
-    --         vim.cmd.stopinsert()
-    --       end,
-    --       finder = 'grep',
-    --       format = 'file',
-    --       show_empty = true,
-    --       supports_live = false,
-    --       layout = 'ivy',
-    --     }
-    --   end,
-    --   desc = '[P]Search for incomplete tasks',
-    -- },
     {
       '<leader>ft',
       function()

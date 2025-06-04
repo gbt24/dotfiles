@@ -16,17 +16,17 @@ return {
         end
 
         -- Navigation
-        map('n', ']h', function()
+        map('n', ']c', function()
           if vim.wo.diff then
-            vim.cmd.normal { ']h', bang = true }
+            vim.cmd.normal { ']c', bang = true }
           else
             gitsigns.nav_hunk 'next'
           end
         end, { desc = 'Jump to next git [h]unk' })
 
-        map('n', '[h', function()
+        map('n', '[c', function()
           if vim.wo.diff then
-            vim.cmd.normal { '[h', bang = true }
+            vim.cmd.normal { '[c', bang = true }
           else
             gitsigns.nav_hunk 'prev'
           end
